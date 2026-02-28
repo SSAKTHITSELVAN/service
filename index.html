@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>S. Sakthi — AI/ML Engineer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --border: #1e1e2e;
+      --accent: #00e5ff;
+      --accent2: #7c3aed;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --green: #22c55e;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* grid bg */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    main { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 60px 24px 100px; }
+
+    /* ── HERO ── */
+    .hero { margin-bottom: 72px; }
+
+    .tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0,229,255,.08); border: 1px solid rgba(0,229,255,.2);
+      color: var(--accent); font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+      padding: 6px 14px; border-radius: 2px; margin-bottom: 28px;
+    }
+    .tag::before { content:''; width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink 1.4s infinite; }
+    @keyframes blink { 0%,100%{opacity:1}50%{opacity:.2} }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(42px, 8vw, 80px);
+      font-weight: 800;
+      line-height: .95;
+      letter-spacing: -.03em;
+      margin-bottom: 20px;
+    }
+    h1 span { color: var(--accent); }
+
+    .subtitle {
+      font-size: 13px; color: var(--muted); line-height: 1.8; max-width: 540px;
+      margin-bottom: 32px;
+    }
+
+    .links { display: flex; gap: 16px; flex-wrap: wrap; }
+    .link-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid var(--border); color: var(--muted);
+      font-size: 11px; text-transform: uppercase; letter-spacing: .1em;
+      padding: 8px 16px; border-radius: 2px; text-decoration: none;
+      transition: all .2s;
+    }
+    .link-pill:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── STATS ── */
+    .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); margin-bottom: 72px; }
+    .stat { background: var(--surface); padding: 28px 24px; }
+    .stat-num { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; color: var(--accent); }
+    .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-top: 4px; }
+
+    /* ── SECTION ── */
+    .section { margin-bottom: 64px; }
+    .section-title {
+      font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .2em; color: var(--muted);
+      margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
+    }
+    .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+    /* ── EXP CARD ── */
+    .exp-card {
+      border: 1px solid var(--border); background: var(--surface);
+      padding: 28px; margin-bottom: 16px;
+      transition: border-color .2s;
+    }
+    .exp-card:hover { border-color: rgba(0,229,255,.3); }
+    .exp-header { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+    .exp-title { font-family:'Syne',sans-serif; font-size:18px; font-weight:700; }
+    .exp-company { color: var(--accent); font-size:12px; margin-top:4px; }
+    .exp-date { font-size:11px; color:var(--muted); white-space:nowrap; }
+    .exp-bullets { list-style:none; }
+    .exp-bullets li { font-size:12px; color:var(--muted); line-height:1.7; padding:4px 0; padding-left:18px; position:relative; }
+    .exp-bullets li::before { content:'→'; position:absolute;left:0;color:var(--accent2);font-size:10px; }
+
+    /* ── SKILLS ── */
+    .skills-grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap:1px; background:var(--border); }
+    .skill-group { background:var(--surface); padding:20px; }
+    .skill-group-name { font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);margin-bottom:10px; }
+    .skill-tags { display:flex;flex-wrap:wrap;gap:6px; }
+    .skill-tag { font-size:10px;border:1px solid var(--border);color:var(--muted);padding:3px 8px; }
+
+    /* ── PROJECTS ── */
+    .project-card {
+      border:1px solid var(--border); padding:24px; margin-bottom:16px;
+      background: var(--surface); transition: border-color .2s;
+      position:relative; overflow:hidden;
+    }
+    .project-card::before {
+      content:''; position:absolute;top:0;left:0;right:0;height:2px;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+    }
+    .project-card:hover { border-color: rgba(124,58,237,.4); }
+    .project-title { font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:6px; }
+    .project-stack { font-size:10px;color:var(--accent2);margin-bottom:12px;letter-spacing:.06em; }
+    .project-desc { font-size:12px;color:var(--muted);line-height:1.8; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align:center; font-size:11px; color:var(--muted);
+      border-top:1px solid var(--border); padding-top:32px; margin-top:80px;
+    }
+
+    /* ── STATUS BAR ── */
+    .status-bar {
+      display:inline-flex;align-items:center;gap:8px;
+      background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);
+      color:var(--green);font-size:11px;padding:6px 14px;border-radius:2px;
+      margin-bottom:40px;
+    }
+    .status-bar::before { content:'';width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 1.4s infinite; }
+
+    @media(max-width:600px){
+      .stats { grid-template-columns:1fr 1fr; }
+      .exp-header { flex-direction:column; }
+    }
+  </style>
+</head>
+<body>
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="tag">AI / ML Engineer</div>
+    <h1>S.<br/><span>Sakthi</span></h1>
+    <p class="subtitle">
+      Building production-grade GenAI systems, LLM-powered applications, and scalable MLOps infrastructure.
+      Based in Dharmapuri, Tamil Nadu.
+    </p>
+    <div class="status-bar">Open to Opportunities · Available Now</div>
+    <div class="links">
+      <a href="https://linkedin.com/in/ssakthitselvan" target="_blank" class="link-pill">↗ LinkedIn</a>
+      <a href="https://github.com/SSAKTHITSELVAN" target="_blank" class="link-pill">↗ GitHub</a>
+      <a href="mailto:ssakthitselvan7@gmail.com" class="link-pill">✉ Email</a>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat"><div class="stat-num">15+</div><div class="stat-label">GenAI Apps Deployed</div></div>
+    <div class="stat"><div class="stat-num">500K+</div><div class="stat-label">Monthly Active Users</div></div>
+    <div class="stat"><div class="stat-num">99.9%</div><div class="stat-label">System Uptime</div></div>
+  </div>
+
+  <!-- EXPERIENCE -->
+  <section class="section">
+    <div class="section-title">Experience</div>
+
+    <div class="exp-card">
+      <div class="exp-header">
+        <div>
+          <div class="exp-title">Senior AI/ML Engineer</div>
+          <div class="exp-company">Pinesphere Solutions Pvt. Ltd. · Coimbatore</div>
+        </div>
+        <div class="exp-date">May 2025 – Present</div>
+      </div>
+      <ul class="exp-bullets">
+        <li>Designed 15+ LLM-powered apps (chatbots, copilots, multi-agent systems) serving 500K+ MAU with 99.9% uptime</li>
+        <li>Built RAG pipelines with LangChain + Pinecone, reducing hallucinations by 40% and hitting 92% accuracy</li>
+        <li>Slashed deployment time from 2 weeks → 3 days via end-to-end MLOps + CI/CD automation</li>
+        <li>Fine-tuned LLaMA variants using LoRA/SFT, cutting inference costs by 60% with no performance loss</li>
+      </ul>
+    </div>
+
+    <div class="exp-card">
+      <div class="exp-header">
+        <div>
+          <div class="exp-title">ML Engineer</div>
+          <div class="exp-company">Bizzap Pvt. Ltd. · Tiruppur</div>
+        </div>
+        <div class="exp-date">Jan 2025 – Apr 2025</div>
+      </div>
+      <ul class="exp-bullets">
+        <li>Built 8+ deep learning models for CV and time-series; 88% production accuracy</li>
+        <li>Automated Airflow + Spark pipelines processing 10TB+ data daily</li>
+        <li>Containerized ML apps on GKE scaling to 1M+ daily predictions</li>
+        <li>Built knowledge graphs improving retrieval accuracy by 45%</li>
+      </ul>
+    </div>
+
+    <div class="exp-card">
+      <div class="exp-header">
+        <div>
+          <div class="exp-title">AI/ML Developer</div>
+          <div class="exp-company">MS Pvt. Ltd. · Bengaluru</div>
+        </div>
+        <div class="exp-date">Jul 2024 – Aug 2024</div>
+      </div>
+      <ul class="exp-bullets">
+        <li>Integrated GPT-4, Claude, and Gemini APIs for multi-turn conversational interfaces</li>
+        <li>Optimized inference on 8× H100 clusters, reducing latency by 70%</li>
+        <li>Applied ReAct and Chain-of-Thought prompting, improving output precision by 30%</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section class="section">
+    <div class="section-title">Key Projects</div>
+
+    <div class="project-card">
+      <div class="project-title">Multi-Agent Customer Support System</div>
+      <div class="project-stack">LangGraph · RAG · FastAPI · GCP</div>
+      <p class="project-desc">Hierarchical multi-agent system handling 50K+ monthly queries with 85% automated resolution. Reduced average response time from 5 min → 30 sec via RAG + persistent memory.</p>
+    </div>
+
+    <div class="project-card">
+      <div class="project-title">Production LLM Fine-Tuning Pipeline</div>
+      <div class="project-stack">PyTorch · LoRA · Cloud Run · Docker</div>
+      <p class="project-desc">Automated fine-tuning pipeline (SFT + LoRA) on 100K+ examples. 25% domain accuracy gain, 55% cost reduction. Auto-scaled on Cloud Run from 100 → 10K concurrent users.</p>
+    </div>
+
+    <div class="project-card">
+      <div class="project-title">Enterprise RAG Chatbot</div>
+      <div class="project-stack">LangChain · FastAPI · Vector Search · Slack API</div>
+      <p class="project-desc">Production chatbot for 2K+ internal users. Semantic caching cut LLM API costs 40%. Achieved 4.5/5 user satisfaction rating.</p>
+    </div>
+
+    <div class="project-card">
+      <div class="project-title">Real-Time Computer Vision</div>
+      <div class="project-stack">PyTorch · TensorFlow Lite · Transformers</div>
+      <p class="project-desc">Transformer-based image classification at 92% accuracy. Edge deployment with &lt;100ms inference, processing 1M+ images/day.</p>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="section">
+    <div class="section-title">Technical Skills</div>
+    <div class="skills-grid">
+      <div class="skill-group">
+        <div class="skill-group-name">LLMs & GenAI</div>
+        <div class="skill-tags">
+          <span class="skill-tag">GPT-4</span><span class="skill-tag">Claude</span><span class="skill-tag">Gemini</span><span class="skill-tag">LLaMA</span><span class="skill-tag">LoRA</span><span class="skill-tag">SFT</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-name">Frameworks</div>
+        <div class="skill-tags">
+          <span class="skill-tag">LangChain</span><span class="skill-tag">LangGraph</span><span class="skill-tag">FastAPI</span><span class="skill-tag">PyTorch</span><span class="skill-tag">TensorFlow</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-name">Cloud & MLOps</div>
+        <div class="skill-tags">
+          <span class="skill-tag">AWS</span><span class="skill-tag">GCP</span><span class="skill-tag">Azure</span><span class="skill-tag">Vertex AI</span><span class="skill-tag">SageMaker</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-name">DevOps</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Docker</span><span class="skill-tag">Kubernetes</span><span class="skill-tag">GitHub Actions</span><span class="skill-tag">Jenkins</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-name">Databases</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Pinecone</span><span class="skill-tag">FAISS</span><span class="skill-tag">PostgreSQL</span><span class="skill-tag">Redis</span><span class="skill-tag">BigQuery</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-name">Specialties</div>
+        <div class="skill-tags">
+          <span class="skill-tag">RAG</span><span class="skill-tag">Multi-Agent</span><span class="skill-tag">NLP</span><span class="skill-tag">Computer Vision</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section class="section">
+    <div class="section-title">Education & Achievements</div>
+    <div class="exp-card">
+      <div class="exp-header">
+        <div>
+          <div class="exp-title">B.Tech — AI & Data Science</div>
+          <div class="exp-company">Sri Krishna College of Technology · CGPA 8.44/10</div>
+        </div>
+        <div class="exp-date">2023 – 2027</div>
+      </div>
+      <ul class="exp-bullets">
+        <li>🏆 1st Prize — DHRUVA 2025 National Hackathon (Karpagam College)</li>
+        <li>🏆 1st Prize — VYNFEST 2025 National Hackathon (KPRIET)</li>
+        <li>🥈 2nd Place — SheHacks'25 (IEEE WIE, KPRIET)</li>
+        <li>Certifications: IBM Generative AI · ISRO ML Specialty · Google Python & Data Analytics · Azure Fundamentals</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 S. Sakthi · Built with HTML · Deployed via Docker + GitHub Actions + Azure</p>
+  </footer>
+
+</main>
+</body>
+</html>

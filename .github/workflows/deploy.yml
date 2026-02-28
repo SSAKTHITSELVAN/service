@@ -1,0 +1,136 @@
+# ──────────────────────────────────────────────────────────────────
+# FILE: .github/workflows/deploy.yml
+#
+# WHAT IS THIS FILE?
+# This is your CI/CD pipeline. Every time you push code to GitHub,
+# this file tells GitHub Actions EXACTLY what to do automatically.
+#
+# THE FLOW:
+#   Push code → GitHub detects it → Runs this file → Tests → 
+#   Builds Docker image → Pushes to Azure → Your site is live!
+# ──────────────────────────────────────────────────────────────────
+
+name: CI/CD → Build, Test & Deploy to Azure
+
+# TRIGGER: When does this pipeline run?
+# Answer: Every time you push to the "main" branch.
+on:
+  push:
+    branches: [ "main" ]
+
+# An "env" block stores variables we reuse across all jobs.
+# IMAGE_NAME is what we'll name our Docker image.
+env:
+  IMAGE_NAME: sakthi-portfolio
+
+jobs:
+
+  # ════════════════════════════════════════════════════════════════
+  # JOB 1: TEST
+  # WHY? Before we deploy anything, we verify our HTML is valid.
+  # If the test fails, the pipeline stops. Nothing broken ever ships.
+  # ════════════════════════════════════════════════════════════════
+  test:
+    name: 🧪 Run Tests
+    runs-on: ubuntu-latest   # GitHub spins up a fresh Ubuntu VM for this
+
+    steps:
+      # Step 1: Download our repo code onto the VM
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Check index.html actually exists
+      - name: Check index.html exists
+        run: |
+          echo "→ Checking index.html is present..."
+          test -f index.html && echo "✅ index.html found!" || (echo "❌ index.html MISSING" && exit 1)
+
+      # Step 3: Check HTML has the key content (your name, sections)
+      - name: Validate HTML content
+        run: |
+          echo "→ Checking for required content..."
+          grep -q "Sakthi" index.html       && echo "✅ Name found"       || (echo "❌ Name missing" && exit 1)
+          grep -q "AI/ML"  index.html       && echo "✅ Role found"       || (echo "❌ Role missing" && exit 1)
+          grep -q "Experience" index.html   && echo "✅ Experience found" || (echo "❌ Experience missing" && exit 1)
+          grep -q "Projects" index.html     && echo "✅ Projects found"   || (echo "❌ Projects missing" && exit 1)
+          echo ""
+          echo "🎉 All tests passed! Safe to deploy."
+
+  # ════════════════════════════════════════════════════════════════
+  # JOB 2: BUILD & PUSH DOCKER IMAGE
+  # WHY? We package our HTML + nginx into a Docker image,
+  # then push it to Azure Container Registry (ACR) — a private
+  # storage space for Docker images in your Azure account.
+  # ════════════════════════════════════════════════════════════════
+  build-and-push:
+    name: 🐳 Build & Push Docker Image
+    runs-on: ubuntu-latest
+    needs: test   # Only runs if JOB 1 (test) passed ✅
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Log in to Azure Container Registry using secrets you set in GitHub
+      # (We'll set these secrets up — explained in the guide below)
+      - name: Login to Azure Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      # Build the Docker image from our Dockerfile
+      # Tag it with the git commit SHA so every version is traceable
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
+          docker tag ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+                     ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
+          echo "✅ Docker image built successfully"
+
+      # Push the image to Azure Container Registry
+      - name: Push Docker image to ACR
+        run: |
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
+          echo "✅ Image pushed to ACR"
+
+  # ════════════════════════════════════════════════════════════════
+  # JOB 3: DEPLOY TO AZURE
+  # WHY? We tell Azure Container Instances to pull our new Docker
+  # image and run it — making it accessible via a public IP address.
+  # ════════════════════════════════════════════════════════════════
+  deploy:
+    name: 🚀 Deploy to Azure
+    runs-on: ubuntu-latest
+    needs: build-and-push   # Only runs if JOB 2 passed ✅
+
+    steps:
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Deploy (or redeploy) the container on Azure Container Instances
+      # This gives us a public IP automatically!
+      - name: Deploy to Azure Container Instances
+        uses: azure/aci-deploy@v1
+        with:
+          resource-group: sakthi-portfolio-rg
+          dns-name-label: sakthi-portfolio          # → sakthi-portfolio.<region>.azurecontainer.io
+          image: ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
+          registry-login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+          registry-username: ${{ secrets.ACR_USERNAME }}
+          registry-password: ${{ secrets.ACR_PASSWORD }}
+          name: sakthi-portfolio-container
+          location: eastus
+          ports: 80
+
+      - name: 🎉 Deployment Complete
+        run: |
+          echo "════════════════════════════════════════"
+          echo "✅ DEPLOYMENT SUCCESSFUL!"
+          echo "🌐 Your site is live at:"
+          echo "   http://sakthi-portfolio.eastus.azurecontainer.io"
+          echo "════════════════════════════════════════"
